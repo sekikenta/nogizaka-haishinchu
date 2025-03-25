@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>乃木坂配信中 - 最新動画ギャラリー</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #c770f0;
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background-color: #1e1e1e;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .thumbnail {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .title {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #fff;
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>乃木坂配信中 - 最新動画ギャラリー</h1>
+  <div class="grid" id="videos"></div>
+
+  <script>
+    const apiKey = 'AIzaSyDbgt6e1cOsih-hdPKOvyRmBY6flOD1qEQ';
+    const channelId = 'UC3s4GJLZdK3fi3P3U8_JN9A';  // ← 乃木坂配信中のチャンネルID
+    const maxResults = 6;
+
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${maxResults}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('videos');
+        data.items.forEach(item => {
+          if (item.id.kind === 'youtube#video') {
+            const videoId = item.id.videoId;
+            const title = item.snippet.title;
+            const thumbnail = item.snippet.thumbnails.medium.url;
+            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+            const html = `
+              <a href="${videoUrl}" target="_blank">
+                <div class="card">
+                  <img src="${thumbnail}" alt="${title}" class="thumbnail" />
+                  <p class="title">${title}</p>
+                </div>
+              </a>
+            `;
+            container.innerHTML += html;
+          }
+        });
+      });
+  </script>
+</body>
+</html>
