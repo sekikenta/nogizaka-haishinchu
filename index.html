@@ -54,30 +54,26 @@
     const channelId = 'UC3s4GJLZdK3fi3P3U8_JN9A';  // ← 乃木坂配信中のチャンネルID
     const maxResults = 6;
 
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${maxResults}`)
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('videos');
-        data.items.forEach(item => {
-          if (item.id.kind === 'youtube#video') {
-            const videoId = item.id.videoId;
-            const title = item.snippet.title;
-            const thumbnail = item.snippet.thumbnails.medium.url;
-            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${maxResults}`)
+    .then(response => response.json())
+    .then(data => {
+      const videos = data.items;
+      const gallery = document.getElementById("videos");
 
-            const html = `
-              <a href="${videoUrl}" target="_blank">
-                <div class="card">
-                  <img src="${thumbnail}" alt="${title}" class="thumbnail" />
-                  <p class="title">${title}</p>
-                </div>
-              </a>
-            `;
-            container.innerHTML += html;
-          }
-        });
+      videos.forEach(video => {
+        if (video.id.videoId) {
+          const videoElement = document.createElement("div");
+          videoElement.classList.add("card");
+          videoElement.innerHTML = `
+            <a href="https://www.youtube.com/watch?v=${video.id.videoId}" target="_blank">
+              <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" class="thumbnail" />
+              <p class="title">${video.snippet.title}</p>
+            </a>
+          `;
+          gallery.appendChild(videoElement);
+        }
       });
-<div id="videos" class="grid"></div>
-  </script>
+    });
+</script>
 </body>
 </html>
